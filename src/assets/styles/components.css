@@ -1,0 +1,312 @@
+/* ---------- HEADER ---------- */
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: var(--color-surface);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+header h1 {
+  color: white;
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+header nav {
+  display: flex;
+  gap: 1.5rem;
+}
+
+header nav a {
+  color: var(--color-text);
+  font-size: 0.95rem;
+  transition: color 0.2s ease;
+}
+
+header nav a:hover {
+  color: var(--color-accent-light);
+}
+
+/* ---------- PROFILE BANNER ---------- */
+
+.profile-banner {
+  position: relative;
+  margin-top: 1rem;
+}
+
+.profile-banner img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+.profile-banner .overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 1.5rem;
+  background: linear-gradient(to top, var(--color-bg), transparent);
+}
+
+.profile-banner h2 {
+  color: white;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+/* ---------- GAMES TABLE ---------- */
+
+.games-card {
+  background-color: var(--color-surface);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  padding: 1.5rem;
+  margin-top: 2rem;
+  transition: box-shadow 0.2s ease;
+}
+
+.games-card:hover {
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+.games-card h3 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: white;
+  border-bottom: 1px solid #334155;
+  padding-bottom: 0.5rem;
+}
+
+.games-card table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.games-card th,
+.games-card td {
+  padding: 0.75rem 0;
+  text-align: left;
+}
+
+.games-card thead {
+  color: #94a3b8;
+  border-bottom: 1px solid #334155;
+}
+
+.games-card tbody tr {
+  border-bottom: 1px solid #1e293b;
+  transition: background-color 0.25s ease;
+}
+
+.games-card tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Forzar banner a ocupar todo el ancho */
+.full-width {
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  position: relative;
+}
+
+.full-width img.banner-bg {
+  display: block;
+  width: 100%;
+  height: 18rem; /* un poco más alto para destacar el banner */
+  object-fit: cover;
+  border-bottom: 4px solid var(--color-accent);
+  border-bottom-left-radius: var(--radius);
+  border-bottom-right-radius: var(--radius);
+}
+
+.full-width .overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(to top, var(--color-bg), transparent);
+  padding: 1.5rem;
+}
+
+/* ---------- PROFILE INFO INSIDE BANNER ---------- */
+.overlay.left-align {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(to top, rgba(15, 23, 42, 0.9), transparent);
+  padding: 2rem 3rem;
+}
+
+.profile-info {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.profile-avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 50% 50% 50% 50%;
+  object-fit: cover;
+  border: 3px solid var(--color-accent);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.profile-info h2 {
+  color: white;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+/* ---------- MODAL FORM FIELDS ---------- */
+.modal-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.modal-fields label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.9rem;
+  color: #cbd5e1;
+}
+
+.modal-fields input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius);
+  border: 1px solid #334155;
+  background-color: #1e293b;
+  color: var(--color-text);
+  font-size: 1rem;
+  transition: border-color 0.2s ease;
+}
+
+.modal-fields input:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+.modal-actions {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-primary {
+  background-color: var(--color-accent);
+  color: white;
+  padding: 0.5rem 1.2rem;
+  border-radius: var(--radius);
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-accent-light);
+}
+
+/* 🔥 MODAL REAL SUPERIOR (centrado y encima de todo) */
+.modal-overlay {
+  position: fixed; /* <– Esto lo hace salir del flujo */
+  top: 0;
+  left: 0;
+  width: 100vw; /* cubrir toda la pantalla */
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* <– encima de todo lo demás */
+  backdrop-filter: blur(4px); /* leve desenfoque del fondo */
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Caja del modal */
+.modal-content {
+  background-color: var(--color-surface);
+  padding: 2rem;
+  border-radius: var(--radius);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  max-width: 500px;
+  width: 90%;
+  color: var(--color-text);
+  position: relative;
+  transform: translateY(20px);
+  transition: all 0.25s ease;
+  transform: translateY(20px);
+  opacity: 0;
+  animation: slideUp 0.3s ease forwards;
+}
+
+/* Botón de cierre */
+.modal-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: color 0.2s ease;
+  z-index: 10000;
+}
+
+.modal-close:hover {
+  color: var(--color-accent-light);
+}
+
+@keyframes slideUp {
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Ocultamos las nativas */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Contenedor con flechas personalizadas */
+.input-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.input-wrapper .arrow {
+  position: absolute;
+  right: 0.6rem;
+  font-size: 0.65rem;
+  color: var(--color-accent);
+  cursor: pointer;
+  user-select: none;
+}
+
+.input-wrapper .arrow.up {
+  top: 0.4rem;
+}
+
+.input-wrapper .arrow.down {
+  bottom: 0.4rem;
+}
+
+.input-wrapper .arrow:hover {
+  color: var(--color-accent-light);
+}
