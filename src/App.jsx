@@ -28,7 +28,7 @@ export default function App() {
     <div className="app">
       <Header />
       <main className="container">
-        <ProfileBanner username="Usuario Anilist" />
+        <ProfileBanner username="Usuario GOG" />
         <GamesTable data={games} />
       </main>
     </div>
