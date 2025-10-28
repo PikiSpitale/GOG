@@ -1,3 +1,5 @@
+import { useEffect, useMemo, useState } from "react";
+
 import "./assets/styles/globals.css";
 import "./assets/styles/components.css";
 import "./assets/styles/animations.css";
@@ -5,32 +7,47 @@ import "./assets/styles/animations.css";
 import { Header } from "./components/Header";
 import { ProfileBanner } from "./components/ProfileBanner";
 import { GamesTable } from "./components/GamesTable";
+import { initialGames } from "./data/games";
+import { Login } from "./components/Login";
+import { Register } from "./components/Register";
 
 export default function App() {
-  const games = [
-    { title: "Persona 5 Royal", genre: "JRPG", score: 9.6, timeplayed: 100 },
-    {
-      title: "The Legend of Zelda: Tears of the Kingdom",
-      genre: "Aventura",
-      score: 9.8,
-      timeplayed: 50,
-    },
-    { title: "Elden Ring", genre: "Soulslike", score: 9.7, timeplayed: 120 },
-    {
-      title: "Stardew Valley",
-      genre: "Simulación",
-      score: 9.0,
-      timeplayed: 85,
-    },
-  ];
+  const [games, setGames] = useState(initialGames);
+  const [route, setRoute] = useState(() => window.location.pathname);
+
+  useEffect(() => {
+    const onPopState = () => setRoute(window.location.pathname);
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
+
+  const handleUpdateGame = (updatedGame) => {
+    setGames((previousGames) =>
+      previousGames.map((game) =>
+        game.id === updatedGame.id ? { ...game, ...updatedGame } : game
+      )
+    );
+  };
+
+  const content = useMemo(() => {
+    if (route === "/login") {
+      return <Login />;
+    }
+    if (route === "/register") {
+      return <Register />;
+    }
+    return (
+      <>
+        <ProfileBanner username="Usuario GOG" />
+        <GamesTable games={games} onUpdateGame={handleUpdateGame} />
+      </>
+    );
+  }, [route, games]);
 
   return (
     <div className="app">
       <Header />
-      <main className="container">
-        <ProfileBanner username="Usuario GOG" />
-        <GamesTable data={games} />
-      </main>
+      <main className="container">{content}</main>
     </div>
   );
 }

@@ -1,84 +1,131 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
+
 import "../assets/styles/components.css";
+
+const FIELD_CONFIG = {
+  score: {
+    min: 1,
+    max: 10,
+    step: 0.1,
+    format: (value) => Number(value.toFixed(1)),
+  },
+  hoursPlayed: {
+    min: 0,
+    max: Number.POSITIVE_INFINITY,
+    step: 1,
+    format: (value) => Math.round(value),
+  },
+};
+
+const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+
+const normalizeValue = (value, config) => {
+  const clampedValue = clamp(value, config.min, config.max);
+  return config.format(clampedValue);
+};
 
 export function Modal({ isOpen, onClose, game, onSave }) {
   const [editedGame, setEditedGame] = useState(null);
-  const modalRef = useRef(null);
-  const mouseDownInside = useRef(false);
 
   useEffect(() => {
-    if (game) {
+    if (isOpen && game) {
       setEditedGame({
         ...game,
-        hoursPlayed: game.hoursPlayed || 0,
-        score: game.score || 1,
+        hoursPlayed: game.hoursPlayed ?? 0,
+        score: game.score ?? FIELD_CONFIG.score.min,
       });
+    } else {
+      setEditedGame(null);
     }
-  }, [game]);
+  }, [game, isOpen]);
 
-  if (!isOpen || !editedGame) return null;
-
-  const handleChange = (field, value) => {
-    if (field === "score") {
-      if (value < 1) value = 1;
-      if (value > 10) value = 10;
-    } else if (field === "hoursPlayed") {
-      if (value < 0) value = 0;
+  useEffect(() => {
+    if (!isOpen) {
+      return;
     }
-    setEditedGame({ ...editedGame, [field]: value });
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        onClose();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen, onClose]);
+
+  if (!isOpen || !editedGame) {
+    return null;
+  }
+
+  const titleId = `${editedGame.id}-modal-title`;
+
+  const handleNumericChange = (field, rawValue) => {
+    const config = FIELD_CONFIG[field];
+    if (!config) {
+      return;
+    }
+
+    const numericValue = Number(rawValue);
+    if (Number.isNaN(numericValue)) {
+      return;
+    }
+
+    setEditedGame((previous) => ({
+      ...previous,
+      [field]: normalizeValue(numericValue, config),
+    }));
   };
 
   const handleArrowClick = (field, direction) => {
-    setEditedGame((prev) => {
-      const step = field === "score" ? 0.1 : 1;
-      let newValue =
-        direction === "up" ? prev[field] + step : prev[field] - step;
-      if (field === "score") {
-        newValue = Math.min(10, Math.max(1, newValue));
-      } else if (field === "hoursPlayed") {
-        newValue = Math.max(0, newValue);
-      }
-      return { ...prev, [field]: parseFloat(newValue.toFixed(1)) };
+    const config = FIELD_CONFIG[field];
+    if (!config) {
+      return;
+    }
+
+    setEditedGame((previous) => {
+      const currentValue = Number(previous[field]);
+      const delta = direction === "up" ? config.step : -config.step;
+      const candidate = currentValue + delta;
+
+      return {
+        ...previous,
+        [field]: normalizeValue(candidate, config),
+      };
     });
+  };
+
+  const handleOverlayClick = (event) => {
+    if (event.target === event.currentTarget) {
+      onClose();
+    }
   };
 
   const handleSave = () => {
     onSave(editedGame);
-    onClose();
-  };
-
-  // 🔒 Evita que un mouseup fuera cierre el modal si el click empezó dentro
-  const handleMouseDown = (e) => {
-    if (modalRef.current && modalRef.current.contains(e.target)) {
-      mouseDownInside.current = true;
-    } else {
-      mouseDownInside.current = false;
-    }
-  };
-
-  const handleMouseUp = (e) => {
-    if (
-      !mouseDownInside.current &&
-      modalRef.current &&
-      !modalRef.current.contains(e.target)
-    ) {
-      onClose();
-    }
-    mouseDownInside.current = false;
   };
 
   return (
-    <div
-      className="modal-overlay"
-      onMouseDown={handleMouseDown}
-      onMouseUp={handleMouseUp}
-    >
-      <div ref={modalRef} className="modal-content fade-in">
-        <button className="modal-close" onClick={onClose}>
-          ✕
+    <div className="modal-overlay" onClick={handleOverlayClick}>
+      <div
+        className="modal-content fade-in"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+      >
+        <button
+          type="button"
+          className="modal-close"
+          onClick={onClose}
+          aria-label="Cerrar modal"
+        >
+          X
         </button>
 
-        <h2>{editedGame.title}</h2>
+        <h2 id={titleId}>{editedGame.title}</h2>
         <p className="genre">{editedGame.genre}</p>
 
         <div className="modal-fields">
@@ -87,26 +134,32 @@ export function Modal({ isOpen, onClose, game, onSave }) {
             <div className="input-wrapper">
               <input
                 type="number"
-                min="1"
-                max="10"
-                step="0.1"
+                min={FIELD_CONFIG.score.min}
+                max={FIELD_CONFIG.score.max}
+                step={FIELD_CONFIG.score.step}
                 value={editedGame.score}
-                onChange={(e) =>
-                  handleChange("score", parseFloat(e.target.value))
+                onChange={(event) =>
+                  handleNumericChange("score", event.target.value)
                 }
               />
-              <span
-                className="arrow up"
-                onClick={() => handleArrowClick("score", "up")}
-              >
-                ▲
-              </span>
-              <span
-                className="arrow down"
-                onClick={() => handleArrowClick("score", "down")}
-              >
-                ▼
-              </span>
+              <div className="arrow-controls">
+                <button
+                  type="button"
+                  className="arrow up"
+                  onClick={() => handleArrowClick("score", "up")}
+                  aria-label="Incrementar puntuación"
+                >
+                  ^
+                </button>
+                <button
+                  type="button"
+                  className="arrow down"
+                  onClick={() => handleArrowClick("score", "down")}
+                  aria-label="Reducir puntuación"
+                >
+                  v
+                </button>
+              </div>
             </div>
           </label>
 
@@ -115,31 +168,37 @@ export function Modal({ isOpen, onClose, game, onSave }) {
             <div className="input-wrapper">
               <input
                 type="number"
-                min="0"
-                step="1"
+                min={FIELD_CONFIG.hoursPlayed.min}
+                step={FIELD_CONFIG.hoursPlayed.step}
                 value={editedGame.hoursPlayed}
-                onChange={(e) =>
-                  handleChange("hoursPlayed", parseInt(e.target.value))
+                onChange={(event) =>
+                  handleNumericChange("hoursPlayed", event.target.value)
                 }
               />
-              <span
-                className="arrow up"
-                onClick={() => handleArrowClick("hoursPlayed", "up")}
-              >
-                ▲
-              </span>
-              <span
-                className="arrow down"
-                onClick={() => handleArrowClick("hoursPlayed", "down")}
-              >
-                ▼
-              </span>
+              <div className="arrow-controls">
+                <button
+                  type="button"
+                  className="arrow up"
+                  onClick={() => handleArrowClick("hoursPlayed", "up")}
+                  aria-label="Incrementar horas jugadas"
+                >
+                  ^
+                </button>
+                <button
+                  type="button"
+                  className="arrow down"
+                  onClick={() => handleArrowClick("hoursPlayed", "down")}
+                  aria-label="Reducir horas jugadas"
+                >
+                  v
+                </button>
+              </div>
             </div>
           </label>
         </div>
 
         <div className="modal-actions">
-          <button className="btn-primary" onClick={handleSave}>
+          <button className="btn-primary" type="button" onClick={handleSave}>
             Guardar cambios
           </button>
         </div>
