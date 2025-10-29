@@ -4,6 +4,7 @@ const NAV_LINKS = [
   { href: "/", label: "Inicio" },
   { href: "/perfil", label: "Perfil" },
   { href: "/biblioteca", label: "Biblioteca" },
+  { href: "/foro", label: "Foro" },
   { href: "/login", label: "Iniciar sesión" },
   { href: "/register", label: "Registrarse" },
 ];
