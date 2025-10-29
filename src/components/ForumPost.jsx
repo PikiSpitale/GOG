@@ -1,4 +1,5 @@
 import "../assets/styles/components.css";
+import profileImage from "../assets/images/profile.jpg";
 
 const formatTags = (tags) => tags.map((tag) => `#${tag}`).join(" ");
 
@@ -35,13 +36,12 @@ export function ForumPost({ post }) {
 
       <footer className="forum-post-footer">
         <div className="forum-post-author">
-          <div className="forum-author-avatar" aria-hidden="true">
-            {author
-              .split(" ")
-              .map((part) => part.charAt(0))
-              .join("")
-              .slice(0, 2)
-              .toUpperCase()}
+          <div className="forum-author-avatar">
+            <img
+              src={profileImage}
+              alt={`Foto de perfil de ${author}`}
+              className="avatar-image"
+            />
           </div>
           <div>
             <p className="forum-author-name">{author}</p>
@@ -64,13 +64,12 @@ export function ForumPost({ post }) {
             <article key={reply.id} className="forum-reply-card">
               <header className="forum-reply-header">
                 <div className="forum-reply-author">
-                  <div className="forum-author-avatar small" aria-hidden="true">
-                    {reply.author
-                      .split(" ")
-                      .map((part) => part.charAt(0))
-                      .join("")
-                      .slice(0, 2)
-                      .toUpperCase()}
+                  <div className="forum-author-avatar small">
+                    <img
+                      src={profileImage}
+                      alt={`Foto de perfil de ${reply.author}`}
+                      className="avatar-image"
+                    />
                   </div>
                   <div>
                     <p className="forum-author-name">{reply.author}</p>

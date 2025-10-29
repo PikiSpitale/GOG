@@ -1,12 +1,5 @@
 import "../assets/styles/components.css";
-
-const getInitials = (name) =>
-  name
-    .split(" ")
-    .map((part) => part.charAt(0))
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
+import profileImage from "../assets/images/profile.jpg";
 
 export function FollowersList({ followers, onToggleFollow }) {
   const hasFollowers = followers.length > 0;
@@ -25,8 +18,12 @@ export function FollowersList({ followers, onToggleFollow }) {
               follower;
             return (
               <li key={id} className="follower-item">
-                <div className="follower-avatar" aria-hidden="true">
-                  {getInitials(name)}
+                <div className="follower-avatar">
+                  <img
+                    src={profileImage}
+                    alt={`Foto de perfil de ${name}`}
+                    className="avatar-image"
+                  />
                 </div>
                 <div className="follower-details">
                   <p className="follower-name">{name}</p>

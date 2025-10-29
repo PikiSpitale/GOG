@@ -21,7 +21,10 @@ export default function App() {
   const [followers, setFollowers] = useState(initialFollowers);
   const [forumPosts] = useState(initialForumPosts);
   const [profileTab, setProfileTab] = useState("games");
-  const [route, setRoute] = useState(() => window.location.pathname);
+  const [route, setRoute] = useState(() => {
+    const path = window.location.pathname;
+    return path === "/" ? "/foro" : path;
+  });
 
   useEffect(() => {
     const onPopState = () => setRoute(window.location.pathname);
